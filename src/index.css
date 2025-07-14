@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+body,
+#root {
+  width: 99vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(ellipse at center, #f0fdf4 0%, #ecfdf5 25%, #d1fae5 50%, #a7f3d0 75%, #6ee7b7 100%);
+  background-attachment: fixed;
+}
