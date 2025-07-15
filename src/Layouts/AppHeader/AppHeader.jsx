@@ -1,8 +1,10 @@
+"use client"
+
 import { useState } from "react"
 import { useLocation } from "react-router-dom"
 import { Menu, Bell, User } from "lucide-react"
 
-const AppHeader = ({ userRole }) => {
+const AppHeader = ({ userRole, userName }) => {
   const [notifications, setNotifications] = useState(3)
   const location = useLocation()
 
@@ -57,8 +59,9 @@ const AppHeader = ({ userRole }) => {
               <User size={18} />
             </div>
             <div className="ml-2 hidden md:block">
-              <p className="text-sm font-medium">
-                {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : "Usuario"}
+              <p className="text-sm font-medium">{userName || "Usuario"}</p>
+              <p className="text-xs text-gray-500">
+                {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : ""}
               </p>
             </div>
           </div>

@@ -1,26 +1,68 @@
+"use client"
+
 import { useState } from "react"
 import { User, Lock, Eye, EyeOff } from "lucide-react"
+import Swal from "sweetalert2" // Asegúrate de tener sweetalert2 instalado
+import axios from "axios"
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [nombre, setNombre] = useState("")
+  const [password_hash, setPassword_hash] = useState("")
   const [error, setError] = useState("")
-  const [showPassword, setShowPassword] = useState(false) // Nuevo estado
+  const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Simulación de autenticación
-    if (username === "admin" && password === "admin") {
-      onLogin("administrador")
-    } else if (username === "pintura" && password === "pintura") {
-      onLogin("lider pintura")
-    } else if (username === "despacho" && password === "despacho") {
-      onLogin("lider despacho")
-    } else {
+    try {
+      const res = await axios.post("http://localhost:10101/login/login", { nombre, password_hash })
+
+      const token = res.data.token
+      const userRoleId = res.data.user.id_rol
+      const userName = res.data.user.nombre
+
+      // Map role IDs to role names
+      let roleName = ""
+      if (userRoleId === 1) {
+        roleName = "administrador"
+      } else if (userRoleId === 2) {
+        roleName = "lider pintura"
+      } else if (userRoleId === 3) {
+        roleName = "lider despacho"
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        text: `Inicio de sesión exitoso como ${roleName}.`,
+        timer: 1500,
+        showConfirmButton: false,
+      })
+
+      // Store token in localStorage for future requests
+      localStorage.setItem("token", token)
+      localStorage.setItem("userRole", roleName)
+      localStorage.setItem("userName", userName)
+
+      onLogin(roleName)
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error)
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Usuario o contraseña incorrectos",
+        timer: 2000,
+        showConfirmButton: false,
+      })
+
       setError("Usuario o contraseña incorrectos")
     }
   }
+
+  // Para la alerta de cierre de sesión, agrégala en el componente donde se maneja el logout:
+  // Ejemplo en el handler de logout:
+  // Swal.fire({ icon: "info", title: "Sesión cerrada", text: "Has cerrado sesión correctamente.", timer: 1500, showConfirmButton: false })
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -44,8 +86,8 @@ const Login = ({ onLogin }) => {
               <input
                 id="username"
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
                 className="pl-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ingrese su usuario"
                 required
@@ -64,8 +106,8 @@ const Login = ({ onLogin }) => {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={password_hash}
+                onChange={(e) => setPassword_hash(e.target.value)}
                 className="pl-10 pr-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ingrese su contraseña"
                 required
@@ -101,3 +143,4 @@ const Login = ({ onLogin }) => {
 }
 
 export default Login
+  

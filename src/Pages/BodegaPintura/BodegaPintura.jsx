@@ -71,12 +71,12 @@ const BodegaPintura = () => {
 
   return (
     <div className="w-full">
-      {" "}
-      {/* Added w-full here */}
-      <h2 className="text-2xl font-bold mb-6">Bodega de Pintura</h2>
+      
+     
+      <h2 className="text-2xl font-bold my-6 ml-5">Bodega de Pintura</h2>
       <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
-        {" "}
-        {/* Added w-full here */}
+        
+        
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <div className="relative">
