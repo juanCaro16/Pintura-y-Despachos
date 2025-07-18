@@ -3,7 +3,10 @@ const StatusBadge = ({ status }) => {
   let textColor = "text-gray-800"
   let statusText = "Desconocido"
 
-  switch (status.toLowerCase()) {
+  // CORRECCIÓN: Asegurarse de que status sea una cadena antes de llamar toLowerCase()
+  const normalizedStatus = (status || "").toLowerCase()
+
+  switch (normalizedStatus) {
     case "listo":
       bgColor = "bg-green-100"
       textColor = "text-green-800"
@@ -20,6 +23,7 @@ const StatusBadge = ({ status }) => {
       statusText = "Pendiente"
       break
     default:
+      // Si status es null, undefined, o una cadena no reconocida, se usará el estilo por defecto (gris).
       break
   }
 

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import AppHeader from "./Layouts/AppHeader/AppHeader"
@@ -19,6 +17,7 @@ export const App = () => {
   const [userRole, setUserRole] = useState(null)
   const [userName, setUserName] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Check for stored authentication on app load
   useEffect(() => {
@@ -46,11 +45,22 @@ export const App = () => {
     setIsAuthenticated(false)
     setUserRole(null)
     setUserName(null)
+    setSidebarOpen(false)
 
     // Clear stored authentication
     localStorage.removeItem("token")
     localStorage.removeItem("userRole")
     localStorage.removeItem("userName")
+  }
+
+  const toggleSidebar = () => {
+    console.log("toggleSidebar called, current state:", sidebarOpen)
+    setSidebarOpen((prev) => !prev)
+  }
+
+  const closeSidebar = () => {
+    console.log("closeSidebar called")
+    setSidebarOpen(false)
   }
 
   if (loading) {
@@ -66,11 +76,15 @@ export const App = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar userRole={userRole} onLogout={handleLogout} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <AppHeader userRole={userRole} userName={userName} />
-        <main className="flex-1 overflow-y-auto">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* Mobile overlay */}
+      {sidebarOpen && <div className="fixed inset-0 bg-opacity-50 z-40 lg:hidden" onClick={closeSidebar} />}
+
+      <Sidebar userRole={userRole} onLogout={handleLogout} isOpen={sidebarOpen} onClose={closeSidebar} />
+
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+        <AppHeader userRole={userRole} userName={userName} onToggleSidebar={toggleSidebar} />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <Routes>
             <Route path="/" element={<Dashboard userRole={userRole} />} />
             <Route

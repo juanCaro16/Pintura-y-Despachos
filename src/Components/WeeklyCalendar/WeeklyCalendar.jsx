@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
@@ -6,12 +8,16 @@ const WeeklyCalendar = ({ events = [], onEventClick }) => {
 
   // Obtener el primer día de la semana (lunes)
   const getWeekStart = (date) => {
-    const day = date.getDay() || 7 // Convertir 0 (domingo) a 7
-    if (day !== 1) {
-      // Si no es lunes
-      date.setHours(-24 * (day - 1))
-    }
-    return new Date(date)
+    const d = new Date(date) // Crear una copia para evitar modificar el objeto original
+    const dayOfWeek = d.getDay() // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+    // Calcular la diferencia para llegar al Lunes (día 1)
+    // Si hoy es Lunes (1), daysToSubtract = 0
+    // Si hoy es Martes (2), daysToSubtract = 1
+    // Si hoy es Domingo (0), daysToSubtract = 6 (para retroceder al Lunes anterior)
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+    d.setDate(d.getDate() - daysToSubtract)
+    d.setHours(0, 0, 0, 0) // Establecer la hora al inicio del día para evitar problemas de huso horario
+    return d
   }
 
   // Obtener los días de la semana actual
@@ -64,12 +70,22 @@ const WeeklyCalendar = ({ events = [], onEventClick }) => {
 
   // Obtener eventos para un día específico
   const getEventsForDay = (date) => {
+    // 'date' es un objeto Date local (del calendario)
     return events.filter((event) => {
-      const eventDate = new Date(event.date)
+      // Parsear la cadena 'event.date' (YYYY-MM-DD) como una fecha local
+      const parts = event.date.split("-") // ["YYYY", "MM", "DD"]
+      const eventYear = Number.parseInt(parts[0], 10)
+      const eventMonth = Number.parseInt(parts[1], 10) - 1 // Meses son 0-indexados en JavaScript
+      const eventDay = Number.parseInt(parts[2], 10)
+
+      // Crear un objeto Date en la zona horaria local a medianoche
+      const eventDateLocalMidnight = new Date(eventYear, eventMonth, eventDay)
+
+      // Comparar los componentes de fecha (año, mes, día) de ambos objetos Date locales
       return (
-        eventDate.getDate() === date.getDate() &&
-        eventDate.getMonth() === date.getMonth() &&
-        eventDate.getFullYear() === date.getFullYear()
+        eventDateLocalMidnight.getFullYear() === date.getFullYear() &&
+        eventDateLocalMidnight.getMonth() === date.getMonth() &&
+        eventDateLocalMidnight.getDate() === date.getDate()
       )
     })
   }
@@ -112,15 +128,15 @@ const WeeklyCalendar = ({ events = [], onEventClick }) => {
                   key={eventIndex}
                   onClick={() => onEventClick && onEventClick(event)}
                   className={`
-                    m-1 p-2 rounded text-sm cursor-pointer
-                    ${
-                      event.status === "listo"
-                        ? "bg-green-100 text-green-800"
-                        : event.status === "en proceso"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
-                    }
-                  `}
+                  m-1 p-2 rounded text-sm cursor-pointer
+                  ${
+                    event.status === "listo"
+                      ? "bg-green-100 text-green-800"
+                      : event.status === "en proceso"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                  }
+                `}
                 >
                   <div className="font-medium">{event.title}</div>
                   <div className="text-xs">{event.time}</div>

@@ -1,8 +1,6 @@
-"use client"
-
 import { useState } from "react"
 import { User, Lock, Eye, EyeOff } from "lucide-react"
-import Swal from "sweetalert2" // Asegúrate de tener sweetalert2 instalado
+import Swal from "sweetalert2"
 import axios from "axios"
 
 const Login = ({ onLogin }) => {
@@ -21,7 +19,6 @@ const Login = ({ onLogin }) => {
       const userRoleId = res.data.user.id_rol
       const userName = res.data.user.nombre
 
-      // Map role IDs to role names
       let roleName = ""
       if (userRoleId === 1) {
         roleName = "administrador"
@@ -39,7 +36,6 @@ const Login = ({ onLogin }) => {
         showConfirmButton: false,
       })
 
-      // Store token in localStorage for future requests
       localStorage.setItem("token", token)
       localStorage.setItem("userRole", roleName)
       localStorage.setItem("userName", userName)
@@ -60,22 +56,20 @@ const Login = ({ onLogin }) => {
     }
   }
 
-  // Para la alerta de cierre de sesión, agrégala en el componente donde se maneja el logout:
-  // Ejemplo en el handler de logout:
-  // Swal.fire({ icon: "info", title: "Sesión cerrada", text: "Has cerrado sesión correctamente.", timer: 1500, showConfirmButton: false })
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Sistema de Gestión</h1>
-          <p className="text-gray-600">Pintura y Despachos</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Sistema de Gestión</h1>
+          <p className="text-gray-600 text-sm sm:text-base">Pintura y Despachos</p>
         </div>
 
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">{error}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
               Usuario
             </label>
@@ -88,14 +82,14 @@ const Login = ({ onLogin }) => {
                 type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                className="pl-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                 placeholder="Ingrese su usuario"
                 required
               />
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Contraseña
             </label>
@@ -108,7 +102,7 @@ const Login = ({ onLogin }) => {
                 type={showPassword ? "text" : "password"}
                 value={password_hash}
                 onChange={(e) => setPassword_hash(e.target.value)}
-                className="pl-10 pr-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-10 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
                 placeholder="Ingrese su contraseña"
                 required
               />
@@ -123,16 +117,16 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base touch-manipulation"
             >
               Iniciar Sesión
             </button>
           </div>
 
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-xs sm:text-sm text-gray-500">
             <p>Usuarios de prueba:</p>
             <p>admin / admin - pintura / pintura - despacho / despacho</p>
           </div>
@@ -143,4 +137,3 @@ const Login = ({ onLogin }) => {
 }
 
 export default Login
-  
